@@ -1,0 +1,21 @@
+{
+	
+    "require": {
+        "phroute/phroute": "^2.1"
+    },
+
+     "autoload": {
+       
+        "psr-4": {
+            "App\\": "app/",
+            "Rayms\\": "vendor/Rayms/"
+        },
+
+        "files" : [
+
+            "bootstrap/bootstrap.php"
+        ]
+
+       
+    }
+}
