@@ -7,6 +7,10 @@ use App\Models\Post;
 
 class PostsController {
 
+	/**
+	 * Show the listings of all resource
+	 * @return  mixed
+	 */
 	public function index()
 	{
 
@@ -15,11 +19,19 @@ class PostsController {
 	
 	}
 
+	/**
+	 * Show the form for creating new resource
+	 * @return  mixed
+	 */	
 	public function create()
 	{
 		$view = new View('posts/create.php');
 	}
 
+	/**
+	 * Store the newly created resource
+	 * @return  mixed
+	 */
 	public function store()
 	{
 
