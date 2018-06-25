@@ -9,7 +9,7 @@ class ViewServiceProvider {
    public function __construct($template)
 	{
 	    try {
-	        $file = $_SERVER['DOCUMENT_ROOT'] . '/app/views/'.$template;
+	        $file = $_SERVER['DOCUMENT_ROOT'].'/app/views/'.$template;
 
 	        if (file_exists($file)) {
 	            $this->render = $file;
@@ -22,11 +22,12 @@ class ViewServiceProvider {
 	    catch (customException $e) {
 	        echo $e->errorMessage();
 	    }
+	    return $this;
 	}
 
-	public function assign($variable, $value)
+	public function assign($key, $value)
 	{
-	    $this->data[$variable] = $value;
+	    $this->data[$key] = $value;
 	}
 
 	public function __destruct()

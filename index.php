@@ -1,8 +1,6 @@
 <?php 
-	
-	//load the bootstap configs
-	include __DIR__.'/./bootstrap/bootstrap.php';
 
-	
+	//load the bootstap config
+    include __DIR__.'/./bootstrap/bootstrap.php';
 
  ?>

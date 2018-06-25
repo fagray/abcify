@@ -10,12 +10,9 @@
             "App\\": "app/",
             "Rayms\\": "vendor/Rayms/"
         },
-
-        "files" : [
-
-            "bootstrap/bootstrap.php"
+        "files": [
+            "config/helpers.php"
         ]
-
        
     }
 }

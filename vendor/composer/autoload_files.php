@@ -6,5 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    '7c6a643bdb1c4d10c911c26f293b4323' => $baseDir . '/bootstrap/bootstrap.php',
+    'c3b503e1c4fa854690606c55273d68b2' => $baseDir . '/config/helpers.php',
 );
