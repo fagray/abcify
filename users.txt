@@ -3,7 +3,7 @@ USERS LIST :
 username : rayray 
 password : abc123
 
-username : jojo 
+username : jojo
 password : goldenshoes
 
 username : boyet 
