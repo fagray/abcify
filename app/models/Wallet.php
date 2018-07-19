@@ -13,25 +13,26 @@ class Wallet extends Model {
 
     protected $table = 'wallets';
 
-    public function getBalance($userWallet)
+    public function getBalance($userWallet) : string
     {
         return $userWallet['wallet_current_balance'];
     }
 
-    public function deductWalletBalance($amount, $userWallet)
+    public function deductWalletBalance($amount, $userWallet) : bool
     {
         $newBalance = (float) $this->getBalance($userWallet) - (float) $amount;
         $this->updateBalance($newBalance, $userWallet);
+        return true;
     }
 
-    public function updateBalance($newBalance, $userWallet)
+    public function updateBalance($newBalance, $userWallet) : bool
     {
         $this->update([
                 'wallet_current_balance' => $newBalance,
                 'wallet_previous_balance' => $this->getBalance($userWallet)
             ],
             [ 'wallet_id' => $userWallet['wallet_id'] ]);   
-        return;
+        return true;
     }
 
 }

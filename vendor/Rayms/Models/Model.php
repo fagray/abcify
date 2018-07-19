@@ -18,7 +18,7 @@ class Model
      *
      * @return     <type>  ( description_of_the_return_value )
      */
-    public function create($attributes = [])
+    public function create($attributes = []) : bool
     {
         $attributes = sanitizeAttributes($attributes);
         $sql  = $this->formulateQueryFor('insert',$attributes);
@@ -31,7 +31,7 @@ class Model
      *
      * @return       array
      */
-    public function all()
+    public function all() : array
     {
         $sql = "SELECT * FROM {$this->table} ";
         $stmt = Database::getConnection()->prepare($sql);
@@ -46,7 +46,7 @@ class Model
      *
      * @return       array
      */
-    public function find($identifier)
+    public function find($identifier) : array
     {
         $sql = "SELECT * FROM {$this->table} WHERE {$this->primaryKey} = {$identifier}";
         $stmt = Database::getConnection()->prepare($sql);
@@ -61,7 +61,7 @@ class Model
      *
      * @return       array
      */
-    public function where($attributes = [])
+    public function where($attributes = []) : array
     {
         $valuePairs = [];
         $counter = 0;
@@ -89,7 +89,7 @@ class Model
      *
      * @return       array
      */
-    public function findByColumn($column, $value)
+    public function findByColumn($column, $value) : array
     {
         $sql = "SELECT * FROM {$this->table} WHERE {$column} = {$value}";
         $stmt = Database::getConnection()->prepare($sql);
@@ -105,7 +105,7 @@ class Model
      *
      * @return     boolean  
      */
-    public function update($atributes = [], $values = [])   
+    public function update($atributes = [], $values = [])   : bool
     {
         $attributePairs = [];
         $valuePairs = [];
@@ -131,14 +131,21 @@ class Model
         return $this->getResultOf($stmt);
     }
 
-    public function delete($cartListIndex)
+    /**
+     * Delete a row
+     *
+     * @param      int   $cartListIndex  
+     *
+     * @return     boolean  
+     */
+    public function delete($cartListIndex) : bool
     {
         $sql = "DELETE FROM {$this->table} WHERE {$this->primaryKey} = {$cartListIndex}";
         $stmt = Database::getConnection()->prepare($sql);
         return $this->getResultOf($stmt);
     }
 
-    public function getResultOf($stmt)
+    public function getResultOf($stmt) : bool
     {
         $result = $stmt->execute();
         if( $result )
@@ -155,7 +162,7 @@ class Model
         return $result;
     }
 
-    public function formulateQueryFor($stmt, $attributePairs, $valuePairs = [])
+    public function formulateQueryFor($stmt, $attributePairs, $valuePairs = []) : string
     {
         $sql = null;
         switch ($stmt) {
@@ -186,7 +193,6 @@ class Model
         }
        return $sql;
     }
-
 
 }
 

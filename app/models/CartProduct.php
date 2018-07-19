@@ -15,7 +15,7 @@ class CartProduct extends Model {
 
     protected $table = 'cart_products';
 
-    public function isAlreadyOnCart($product,$cart)
+    public function isAlreadyOnCart($product,$cart) : bool
     {
         $row = $this->where(['product_id'   => $product, 'cart_id' => $cart]);
         if (count($row) > 0)
@@ -25,7 +25,7 @@ class CartProduct extends Model {
         return false;
     }
 
-    public function updateQtyInstead($product, $qty)
+    public function updateQtyInstead($product, $qty) : bool
     {
         $cart = (new User)->cart();
         $productCart = $this->where(['product_id' => $product, 'cart_id' => $cart]);
@@ -37,10 +37,10 @@ class CartProduct extends Model {
                 'cart_id'       =>      $cart
             ]
         );
-        return;
+        return true;
     }
 
-    public function getCartProducts($cartId)
+    public function getCartProducts($cartId) : array
     {
         $sql = "SELECT * FROM {$this->table} as cp LEFT JOIN products as p ";
         $sql .= "ON cp.product_id = p.product_id WHERE cp.cart_id = {$cartId}  ";
@@ -49,7 +49,7 @@ class CartProduct extends Model {
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function getAllWithCompleteProductMetadata()
+    public function getAllWithCompleteProductMetadata() : array
     {
         $sql = "SELECT * FROM {$this->table} as c LEFT JOIN products as p ";
         $sql .= "ON c.product_id = p.product_id ";
@@ -58,7 +58,7 @@ class CartProduct extends Model {
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function empty()
+    public function empty() : bool
     {
         $sql = "DELETE FROM {$this->table}";
         $stmt = Database::getConnection()->prepare($sql);
@@ -67,12 +67,12 @@ class CartProduct extends Model {
 
     }
 
-    public function removeFromCart($cartListIndex)
+    public function removeFromCart($cartListIndex) : bool
     {
         return $this->delete($cartListIndex);
     }
 
-    public function updateQty($cartListIndex,$newQty)
+    public function updateQty($cartListIndex,$newQty) : bool
     {
         return $this->update(['qty' => $newQty],['cart_product_id' => $cartListIndex]);
     }

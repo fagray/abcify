@@ -18,11 +18,12 @@ class HomeController {
 	 * Show all products
 	 * @return  mixed
 	 */
-	public function index()
+	public function index() : boolean
 	{
 		$products = $this->product->all();
 		$view = new View('products/index.php');
 		$view->assign('products',$products);
+		return true;
 	
 	}
 }

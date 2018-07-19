@@ -9,7 +9,7 @@ class Auth {
      *
      * @return       
      */
-    public function authorize()
+    public function authorize() : bool
     {
         if (authUser()['user_id'] == null )
         {

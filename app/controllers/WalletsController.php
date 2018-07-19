@@ -5,6 +5,7 @@ namespace App\Controllers;
 use Rayms\View\View;
 use App\Models\Wallet;
 use App\Models\User;
+use App\Presenters\JSONResponse;
 
 class WalletsController {
 
@@ -17,10 +18,10 @@ class WalletsController {
 		$this->user = new User;
 	}
 
-	public function getBalance()
+	public function getBalance() : JSONResponse
 	{
 		$userWallet = $this->user->wallet();
-		return json(['wallet_balance' => $userWallet['wallet_current_balance']]);
+		return new JSONResponse(['wallet_balance' => $userWallet['wallet_current_balance']]);
 	}
 
 }

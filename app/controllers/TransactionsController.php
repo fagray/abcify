@@ -17,11 +17,12 @@ class TransactionsController {
 		$this->user = new User;
 	}
 
-	public function index()
+	public function index() : boolean
 	{
 		$transactions  =  $this->user->transactions();
 		$view = new View('transactions/index.php');
 		$view->assign('transactions',$transactions);
+		return true;
 	}
 
 }

@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use App\Models\Wallet;
 use App\Models\User;
 use App\Models\Auth;
+use App\Presenters\JSONResponse;
 
 class CartController {
 
@@ -32,25 +33,25 @@ class CartController {
 
 	/**
 	 * Show the listings of products in a cart
-	 * @return  mixed
+	 * @return  JSONResponse
 	 */
-	public function index()
+	public function index() : JSONResponse
 	{
-		return json($this->cart->listProducts());
+		return new JSONResponse($this->cart->listProducts());
 	}
 
 	/**
-	 * Store the newly created resource
-	 * @return  mixed
+	 * Start shopping 
+	 * @return  JSONResponse
 	 */
-	public function startShopping()
+	public function startShopping() : JSONResponse
 	{
 		if ( ! $this->auth->authorize() )
 		{
-			return json(['msg' => 'Unauthorized', 'code' => 401]);
+			return new JSONResponse(['msg' => 'Unauthorized', 'code' => 401]);
 		}
-		$productId 	= 		$_POST['product_id'];
-		$qty		= 		$_POST['qty'];
+		$productId 	= 		input('product_id');
+		$qty		= 		input('qty');
 		if ( $this->user->isAlreadyStrollingACart() )
 		{
 			$cart = $this->user->cart();
@@ -61,50 +62,54 @@ class CartController {
 		}
 		$product = [
 				'cart_id' 			=> 		$cart,
-				'product_id' 		=>		$_POST['product_id'],
-				'qty' 				=> 		$_POST['qty'],
-				'price' 			=> 		$_POST['price']
+				'product_id' 		=>		input('product_id'),
+				'qty' 				=> 		input('qty'),
+				'price' 			=> 		input('price')
 			];
 		if ($this->cartProduct->isAlreadyOnCart($productId,$cart))
 		{
 			$this->cartProduct->updateQtyInstead($productId,$qty);
-			return json(['msg' => 'Cart has been updated!','code' => 200]);
+			return new JSONResponse(['msg' => 'Cart has been updated!','code' => 200]);
 		}
 		$this->cart->loadNew($product);
-		return json(['msg' => 'Product has been added to cart!','code' => 200]);
+		return new JSONResponse(['msg' => 'Product has been added to cart!','code' => 200]);
 	}
 
-	public function show()
+	public function show() : bool
 	{
 		$productsOnCart = $this->cart->listProducts();
 		$view = new View('cart/view.php');
 		$view->assign('productsOnCart',$productsOnCart);
+		return true;
 	}
 
-	public function checkout()
+	public function checkout() : JSONResponse
 	{
-		$transactionCost = $_POST['transaction_cost'];
+		$transactionCost = input('transaction_cost');
 		$userWallet = $this->user->wallet();
 		if ( ! $this->walletHasEnoughCashForThis($transactionCost, $userWallet))
 		{
-			return json(['msg' => 'Insufficient cash!','code' => 500]);
+			return new JSONResponse(['msg' => 'Insufficient cash!','code' => 500]);
 		}
 		
 		$transactionData = [
 			'wallet_id'				=>		$userWallet['wallet_id'],
-			'transaction_cost'		=>		$_POST['transaction_cost'],
+			'transaction_cost'		=>		input('transaction_cost'),
 			'transaction_date'		=>		date('Y-m-d g:i:a '),
-			'shipping_method'		=>		$_POST['shipping_method'],
-			'shipping_cost'			=>		$_POST['shipping_cost']
+			'shipping_method'		=>		input('shipping_method'),
+			'shipping_cost'			=>		input('shipping_cost')
 		];
-		$this->storeTransaction($transactionData)
-			->deductWalletBalance($transactionCost,$userWallet)
-			->andEmptyCart();
+		// store the transaction
+		$this->storeTransaction($transactionData);
+		// deduct the balance
+		$this->deductWalletBalance($transactionCost,$userWallet);
+		// then, empty cart
+		$this->emptyCart();
 
-		return json(['msg' => 'Transaction completed!','code' => 200]);
+		return new JSONResponse(['msg' => 'Transaction completed!','code' => 200]);
 	}
 
-	public function walletHasEnoughCashForThis($transactionCost, $userWallet)
+	public function walletHasEnoughCashForThis($transactionCost, $userWallet) : bool
 	{
 		if ( (float) $userWallet['wallet_current_balance'] >= $transactionCost )
 		{
@@ -113,40 +118,51 @@ class CartController {
 		return false;
 	}
 
-	public function storeTransaction($transactionData)
+	/**
+	 * Stores a transaction.
+	 *
+	 * @param      array     $transactionData  
+	 *
+	 * @return     boolean 
+	 */
+	public function storeTransaction($transactionData) : bool
 	{
 		$this->transaction->create($transactionData);
-		return $this;
+		return true;
 	}
 
-	public function deductWalletBalance($amount,$userWallet)
+	public function deductWalletBalance($amount,$userWallet) : bool
 	{
 		$this->wallet->deductWalletBalance($amount,$userWallet);
-		return $this;
+		return true;
 	}
 
-	public function andEmptyCart()
+	/**
+	 * Empty the cart
+	 */
+	public function emptyCart() : bool
 	{
 		$this->cart->empty();
+		return true;
 	}
 
-	public function removeProduct($cartListIndex)
+	public function removeProduct($cartListIndex) : JSONResponse
 	{
 		if ($this->cartProduct->removeFromCart($cartListIndex))
 		{
-			return json(['msg' => 'Product has been removed from cart!','code' => 200]);
+			return new JSONResponse(['msg' => 'Product has been removed from cart!','code' => 200]);
 		}
-		return json(['msg' => 'Error removing product from cart!','code' => 500]);
+		return new JSONResponse(['msg' => 'Error removing product from cart!','code' => 500]);
 	
 	}
-	public function updateProductQty($cartListIndex)
+	public function updateProductQty($cartListIndex) : JSONResponse
 	{
-		$newQty = $_POST['new_qty'];
+		$newQty = input('new_qty');
 		if ($this->cartProduct->updateQty($cartListIndex,$newQty))
 		{
-			return json(['msg' => 'Product qty has been updated!','code' => 200]);
+			return new JSONResponse(['msg' => 'Product qty has been updated!','code' => 200]);
 		}
-		return json(['msg' => 'Error updating product qty!','code' => 500]);
+		return new JSONResponse(['msg' => 'Error updating product qty!','code' => 500]);
 	
 	}
 

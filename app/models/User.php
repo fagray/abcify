@@ -21,12 +21,12 @@ class User extends Model {
      *
      * @return     boolean  
      */
-    public function isAlreadyStrollingACart()
+    public function isAlreadyStrollingACart() : bool
     {
         $shopper = authUser()['user_id'];
         $cart = (new Cart)->findByShopper($shopper);
         var_dump($cart);
-        if ( count($cart) > 0 ) 
+        if ( count((array)$cart) > 0 ) 
         {
             return $cart;
        }
@@ -38,15 +38,11 @@ class User extends Model {
      *
      * @return     boolean  
      */
-    public function cart()
+    public function cart() : bool
     {
         $shopper = authUser()['user_id'];
-        $cart = (new Cart)->findByShopper($shopper);
-        if ( count($cart) > 0 ) 
-        {
-            return $cart;
-       }
-       return false;
+       return (new Cart)->findByShopper($shopper);
+        
     }
 
     /**
@@ -54,7 +50,7 @@ class User extends Model {
      *
      * @return     array  
      */
-    public function pullACart()
+    public function pullACart() : bool
     {
         $data = ['user_id' => authUser()['user_id'],'cart_status' => 'open'];
         return (new Cart)->create($data);
@@ -78,7 +74,7 @@ class User extends Model {
     /**
      * Returns the transaction list of the user
      */
-    public function transactions()
+    public function transactions() : array
     {
         return (new Transaction)->grabUserTransactions();
     }
@@ -91,10 +87,9 @@ class User extends Model {
      *
      * @return     boolean  
      */
-    public function authenticate($user)
+    public function authenticate($user) : array
     {   
-        $user = $this->where(['username' => $user['username'],'password' => $user['password']]) ;
-        return $user;
+        return $this->where(['username' => $user['username'],'password' => $user['password']]) ;
     }
 
 }

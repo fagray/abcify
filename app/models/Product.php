@@ -12,7 +12,7 @@ class Product extends Model {
 
     protected $table = 'products';
 
-    public function rate($productId, $rating)
+    public function rate($productId, $rating) : bool
     {
         (new ProductRating)->create([
                 'user_id'       => authUser()['user_id'],
@@ -20,8 +20,8 @@ class Product extends Model {
                 'rating'        => $rating
             ]);
         $averageRating = (new ProductRating)->getAverageRating($productId);
-        $product = $this->find($productId);
         $this->update(['product_rating' => $averageRating],['product_id' => $productId]);
+        return true;
     }
 
 

@@ -193,3 +193,21 @@ function sanitizeAttributes($rawAttributes)
     }
     return $cleanAttributes;
 }
+
+/**
+ * Retrieve form input
+ *
+ * @param      string  $key    
+ *
+ * @return       string
+ */
+function input($key){
+    if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'GET')
+    {
+        return $_GET[$key];
+    }
+    if (filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST')
+    {
+        return $_POST[$key];
+    }
+}

@@ -5,6 +5,7 @@ namespace App\Controllers;
 use Rayms\View\View;
 use App\Models\Product;
 use App\Models\Auth;
+use App\Presenters\JSONResponse;
 
 class ProductsController {
 
@@ -21,24 +22,24 @@ class ProductsController {
 	 * Show the listings of all resource
 	 * @return  mixed
 	 */
-	public function index()
+	public function index() : JSONResponse
 	{
-		return json($this->product->all());	
+		return new JSONResponse($this->product->all());	
 	}
 
 	/**
 	 * Store the newly created resource
 	 * @return  mixed
 	 */
-	public function rate($productId)
+	public function rate($productId) : JSONResponse
 	{
 		if ( ! $this->auth->authorize() )
 		{
-			return json(['msg' => 'Unauthorized', 'code' => 401]);
+			return new JSONResponse(['msg' => 'Unauthorized', 'code' => 401]);
 		}
-		$rating = $_POST['rating'];
+		$rating = input('rating');
 		$this->product->rate($productId, $rating);
-		return json(['msg' => 'Rating has been added !','code' => 200]);
+		return new JSONResponse(['msg' => 'Rating has been added !','code' => 200]);
 	}
 
 }

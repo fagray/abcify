@@ -13,7 +13,7 @@ class Transaction extends Model {
 
     protected $table = 'transactions';
 
-    public function grabUserTransactions()
+    public function grabUserTransactions() : array
     {
         $userId = authUser()['user_id'];
         $sql = "SELECT * FROM {$this->table} as t LEFT JOIN wallets as w ";

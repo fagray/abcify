@@ -17,9 +17,9 @@ class AuthController {
 
 	/**
 	 * Show the login form
-	 * @return  mixed
+	 * @return  View
 	 */
-	public function login()
+	public function login() : View
 	{
 		return new View('auth/login.php');
 	}
@@ -31,8 +31,8 @@ class AuthController {
 	 */
 	public function authenticate()
 	{
-		$hashedPassword = md5($_POST['password']);
-		$userData = ['username' => $_POST['username'],'password' => $hashedPassword];
+		$hashedPassword = md5(input('password'));
+		$userData = ['username' => input('username'),'password' => $hashedPassword];
 		$user = $this->user->authenticate($userData);
 		if ( ! $user )
 		{

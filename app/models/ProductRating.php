@@ -13,7 +13,7 @@ class ProductRating extends Model {
 
     protected $table = 'product_ratings';
 
-    public function getAverageRating($productId)
+    public function getAverageRating($productId) : double
     {
         $sql = "SELECT SUM(rating) as average_rating, COUNT(rating) as rating_count FROM {$this->table} WHERE product_id = {$productId}";
         $stmt = Database::getConnection()->prepare($sql);
